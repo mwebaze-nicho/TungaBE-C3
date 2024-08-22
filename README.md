@@ -1,12 +1,12 @@
-##Getting Started:-
+**Getting Started:**
 
-📂 First install the project packages:
+#📂 First install the project packages:
 
 ```bash
 npm install
 ```
 
-🛜 Then start the server:
+#🛜 Then start the server:
 
 ```bash
 npm start
