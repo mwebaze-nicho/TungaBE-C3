@@ -5,7 +5,7 @@ const app = express();
 const fs = require("fs");
 const port = 3000;
 
-app.use(express.json());
+app.use(express.json()); //middleware
 
 //Simple data set example
 // const users = [
