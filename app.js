@@ -1,65 +1,43 @@
 const express = require("express");
+const uploader = require("./cloudinary");
+const upload = require("./multer");
+const fs = require("fs");
+
 const app = express();
-const userRoutes = require("./routes/users");
 const port = 3000;
 
-//third party middleware
-const morgan = require("morgan");
-
 app.use(express.json());
-app.use("/api", userRoutes);
 
-//middleware in express
-// app.use((req, res, next) => {
-//   console.log(`${req.method}. ${req.url}`);
-
-//   const urlSource = req.url;
-
-//   //Only allow "/"
-//   if (urlSource !== "/") {
-//     res.send("Wrong URL: " + urlSource);
-//     return;
-//   }
-//   next();
-// });
-
-//Error handling middleware
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({
-    errorMessage: err.message,
-  });
-});
-
-//third party middleware
-app.use(morgan("dev"));
-
-app.get("/", (req, res) => {
-  res.send("hello world");
-});
-
-app.post(
-  "/new/user",
-
-  //check if user if an admin
-  (req, res, next) => {
-    const user = req.body;
-    if (user.name != "admin") {
-      res.send("Unauthorized name.");
+/*
+ * Route to handle file upload i.e api/uploads
+ * We are uploading a single file with a key of image. If the key is different from image it will not work as multer will fail to recognize it.
+ * For a single file upload multer give  us a req.file which allows us to access the uploaded file and req.files for multiple files.
+ * Once we have uploaded the file we extract the path and use it to upload the file to cloudinary and then delete it with fs from the disk storage.
+ */
+app.post("/api/uploads", upload.single("image"), async (req, res) => {
+  //access the file from multer
+  const file = req.file;
+  try {
+    if (!file) {
+      res.status(400).json({ message: "No file uploaded." });
       return;
     }
+    //extract path from the file
+    const { path } = file;
 
-    next();
-  },
+    //upload the file to cloudinary
+    const result = await uploader(path);
 
-  //if admin, make a post request
-  (req, res) => {
-    res.json({
-      user: req.body.name,
-      message: "Right user",
-    });
+    res
+      .status(200)
+      .json({ message: "File uploaded successfully!", data: result });
+
+    fs.unlinkSync(path);
+    
+  } catch (error) {
+    res.status(500).send("File upload failed.");
   }
-);
+});
 
 app.listen(port, () => {
   console.log("listening on port " + port);
