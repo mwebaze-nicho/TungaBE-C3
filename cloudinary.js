@@ -2,9 +2,9 @@ const cloudinary = require("cloudinary");
 
 // Configuration
 cloudinary.config({
-  cloud_name: "dexwmv2n8",
-  api_key: "724638491265128",
-  api_secret: "pOAtW-L2VIlO5UipfGLdoKKmJDQ", // Click 'View API Keys' above to copy your API secret
+  cloud_name: "",
+  api_key: "",
+  api_secret: "", // Click 'View API Keys' above to copy your API secret
 });
 
 // Upload an image
