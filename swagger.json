@@ -1,0 +1,373 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Your app title",
+    "description": "",
+    "version": "1.0.0"
+  },
+
+  "host": "yourhost-link",
+  "basePath": "/api",
+  "schemes": ["http", "https"],
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "AuthToken": {
+      "type": "apiKey",
+      "name": "authorization",
+      "in": "header",
+      "description": "The token for authentication"
+    }
+  },
+  "security": [
+    {
+      "AuthToken": []
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "tags": ["User Auth"],
+        "description": "Create a new account",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Data required to register the user. Username should be auto generated based on the tech stack selected by the student. The student should only enter their prefered password.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully registered"
+          },
+          "400": {
+            "description": "No data to register"
+          },
+          "409": {
+            "description": "User or email already exists."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        }
+      }
+    },
+    "/auth/verify/email": {
+      "patch": {
+        "tags": ["User Auth"],
+        "description": "Verify user email. All users/student accounts must have valid email addresses and therefore must be verified before continuing to login. No user input required. Just send the token sent in the verification email in the header field of this request. Verification token is valid for 1 hours.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+
+        "responses": {
+          "200": {
+            "description": "Successfully verified user email address."
+          },
+          "404": {
+            "description": "No matching user found."
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["User Auth"],
+        "description": "Login to account. This returns a token that should be sent with a very request to the backend. The authorization should shart with 'Bear ${token}'",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Data required to authenticate the user",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "No data to register"
+          },
+          "404": {
+            "description": "No users found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/auth/update": {
+      "patch": {
+        "tags": ["User Auth"],
+        "description": "Update account information.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Data required to update the user information.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "updatedEmail": {
+                  "type": "string"
+                },
+                "updatedPassword": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully updated."
+          },
+          "400": {
+            "description": "No data to register"
+          },
+          "404": {
+            "description": "No user found."
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+
+    "/students/register": {
+      "post": {
+        "tags": ["Student Information"],
+        "description": "Create a new student information.",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "studentPassport",
+            "type": "file",
+            "description": "Upload studentPassport photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "studentID",
+            "type": "file",
+            "description": "Upload studentID photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "studentSignature",
+            "type": "file",
+            "description": "Upload studentSignature photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "nextOfKinPassport",
+            "type": "file",
+            "description": "Upload nextOfKinPassport photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "nextOfKinID",
+            "type": "file",
+            "description": "Upload nextOfKinID photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "parentPassport",
+            "type": "file",
+            "description": "Upload parentPassport photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "parentID",
+            "type": "file",
+            "description": "Upload parentID photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "parentSignature",
+            "type": "file",
+            "description": "Upload parentSignature photo (.png, max 1MB)",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Additional body content",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StudentInfo"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully created student information."
+          },
+          "400": { "description": "Unable to authenticate token" },
+          "401": {
+            "description": "Access denied. No authorization found."
+          },
+          "500": {
+            "description": "Server error occured while creating student information"
+          }
+        }
+      }
+    },
+    "/students/info": {
+      "get": {
+        "tags": ["Student Information"],
+        "description": "Get student information. This will return only information of the user matching the userID from the token.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved student information."
+          },
+          "400": { "description": "Unable to authenticate token" },
+          "401": {
+            "description": "Access denied. No authorization found."
+          },
+          "403": {
+            "description": "Unauthenticated request."
+          },
+          "404": {
+            "description": "No matching user information found."
+          },
+          "500": {
+            "description": "Server error / invalid token"
+          }
+        }
+      }
+    },
+    "/students/update": {
+      "patch": {
+        "tags": ["Student Information"],
+        "description": "Update student information. Student information will be updated based on the token provided.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update student information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["studentAddress", "studentEmail", "studentPhoneNo"],
+              "properties": {
+                "studentAddress": {
+                  "type": "string",
+                  "description": "The address of the student"
+                },
+                "studentEmail": {
+                  "type": "string",
+                  "description": "The email address of the student",
+                  "format": "email"
+                },
+                "studentPhoneNo": {
+                  "type": "string",
+                  "description": "The phone number of the student"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully created student information."
+          },
+          "400": { "description": "Unable to authenticate token" },
+          "401": {
+            "description": "Access denied. No authorization found."
+          },
+          "500": {
+            "description": "Server error occured while creating student information"
+          }
+        }
+      }
+    },
+    "/students/delete": {
+      "delete": {
+        "tags": ["Student Information"],
+        "description": "Delete student information. User information will be deleted based on the userID from the token.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Unable to authenticate token"
+          },
+          "401": {
+            "description": "Access denied. No authorization found."
+          },
+          "404": {
+            "description": "No matching user informationfound."
+          },
+          "500": {
+            "description": "Server error / invalid token"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "StudentInfo": {
+      "type": "object",
+      "properties": {
+        "studentFirstName": {
+          "type": "string"
+        },
+        "studentLastName": {
+          "type": "string"
+        },
+
+        "add-more-fields-of-your-choice": {}
+      }
+    }
+  }
+}
